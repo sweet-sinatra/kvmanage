@@ -13,7 +13,7 @@ guests:
     virt_hypervisor: hvm
     os:
         type: linux
-        variant: fedora19
+        variant: ubuntuxenial
     disk:
         size: 5
 	path: /var/lib/libvirt/images
