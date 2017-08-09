@@ -1,9 +1,6 @@
 ---
-- hosts: ubuntu
-	
 - name: manage libvirt guests
-  user: root
-  hosts: all
+  hosts: ubuntu
 
   vars_files:
       - vars/guests.yml
@@ -21,19 +18,32 @@
         virt: command=list_vms
         register: virt_vms
 
+      - name: Copy templates
+        template:
+          src: templates/preseed.cfg
+          dest: /var/lib/libvirt/images/{{ item.name }}-preseed.cfg
+        when: item.name not in virt_vms.list_vms
+        with_items: guests
+
       - name: create vm
         command: virt-install -n {{item.name}}
-                 -r {{ item.mem }}
+                 --connect qemu:///system \
+                 --name {{ item.name }} \
                  --vcpus {{ item.cpu }}
+                 --ram  {{ item.mem }} \
+                 --disk size={{item.disk.size}},path={{item.disk.path}}/{{item.name}}.img,bus=virtio,sparse=false
+                 --network network=default,model=virtio \
                  --location {{ item.url }}
                  --os-type {{ item.os.type }}
                  --os-variant {{ item.os.variant }}
-                 --network network=default
-                 --graphics vnc
-                 --{{item.virt_hypervisor}}
                  --virt-type {{ item.virt_type }}
-                 --disk size={{item.disk.size}},path={{item.disk.path}}/{{item.name}}.img
+                 --initrd-inject=/var/lib/libvirt/images/{{ item.name }}-preseed.cfg \
+                 --extra-args="locale=en_US.UTF-8 console-setup/ask_detect=false keyboard-configuration/layoutcode=fr file=file:/{{ item.name }}-preseed.cfg vga=788 quiet" \
+                 --graphics vnc \
+                 --noreboot \
+                 --{{item.virt_hypervisor}} \
                  --noautoconsole
+#                 --video=vga \
         when: item.name not in virt_vms.list_vms
         with_items: guests
 
@@ -44,4 +54,4 @@
       - name: make sure all vms are running
         virt: name={{item.name}} command=start
         when: virt_info[item.name]['state'] != 'running'
-with_items: guests
+        with_items: guests
