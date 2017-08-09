@@ -1,0 +1,20 @@
+---
+- name: Upgrade system - Ubuntu
+  apt:
+    upgrade: dist
+
+# It seems not working !
+#- name: Remove dependencies - Ubuntu
+#  apt:
+#    autoremove: yes
+
+#- name: Check if anything needs autoremoving
+#  shell: apt-get -y --dry-run autoremove | grep -q "0 to remove"
+#  register: check_autoremove
+#  ignore_errors: True
+#  changed_when: False
+##  check_mode: no
+#
+- name: Autoremove unused packages
+  command: apt-get -y autoremove
+#  when: "check_autoremove.rc != 0"

@@ -1,0 +1,14 @@
+---
+guests:
+  - name: ubuntu-lab
+    url: http://fedora.osuosl.org/linux/releases/19/Fedora/x86_64/os/
+    cpu: 1
+    mem: 768
+    virt_type: kvm
+    virt_hypervisor: hvm
+    os:
+        type: linux
+        variant: fedora19
+    disk:
+        size: 5
+	path: /var/lib/libvirt/images

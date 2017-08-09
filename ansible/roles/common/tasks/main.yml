@@ -1,0 +1,6 @@
+---
+- include: "{{ item }}"
+  with_first_found:
+    - "upgrade-{{ ansible_distribution }}.yml"
+    - "upgrade-default.yml"
+  tags: tasks

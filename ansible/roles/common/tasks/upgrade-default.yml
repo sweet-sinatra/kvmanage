@@ -1,0 +1,6 @@
+---
+- name: Upgrade system - default way
+  package:
+    name: "*"
+    state: latest
+

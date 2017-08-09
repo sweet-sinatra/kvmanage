@@ -1,0 +1,11 @@
+---
+[lab:children]
+ubuntu
+fedora
+
+[ubuntu]
+kvm1
+
+[fedora]
+kvm2
+
